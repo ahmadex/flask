@@ -1,5 +1,5 @@
 from datetime import datetime
-from flaskblog import db
+from flaskblog import db, app
 from flaskblog import login_manager
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -26,6 +26,7 @@ class User(db.Model, UserMixin):
         s = Serializer(app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
+            print('veridy-reset-token-user-id',user_id )
         except:
             return None
         

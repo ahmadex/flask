@@ -66,7 +66,7 @@ class RequestTokenForm(FlaskForm):
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
-        if user in None:
+        if user is None:
             raise ValidationError('This Email Does not Exist')
 
 
