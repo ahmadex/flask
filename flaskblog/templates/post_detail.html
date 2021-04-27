@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    
+    {% if post.author == current_user %}
+        <a class="btn btn-primary" href="{{ url_for('post_update', pk=post.id)}}" role="button">Update</a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletemodal">
+        Delete
+        </button></div>
+    {% endif %}
+        
+    <div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are u Sure You want to Delete "{{ post.title }}" ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancle</button>
+                <form action="{{ url_for('post_delete', pk=post.id) }}" method='POST'>
+                    <input class='btn btn-danger'type='submit' value='Delete'>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-md-12 col-lg-12">
+        <article class="post vt-post" style='padding:10px;'>
+            <div class="row">
+                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-4">
+                    <div class="post-type post-img">
+                       <img class="rounded-circle" src="{{ url_for('static', filename='/images/' + post.author.image_file) }}" class="img-responsive" alt="image post">
+                    </div>
+                    By:{{ post.author.username}}
+                    <div class="author-info author-info-2">
+                        <ul class="list-inline">
+                            <li>
+                                <div class="info">
+                                    <p>Posted on:</p>
+                                    <strong>{{ post.created.strftime('%Y-%m-%d')}}</strong></div>
+                            </li>    
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">
+                    <div class="caption">
+                        <h3 class="md-heading">{{post.title}}</h3>
+                        <p> {{ post.body }} </p>
+                </div>
+            </div>        
+        </article>
+        <hr>
+    </div>
+</div>
+</div>
+
+{% endblock content %}
+
+
+
+   
