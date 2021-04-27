@@ -2,6 +2,7 @@ import secrets
 import os 
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
+from wtforms.validators import ValidationError
 from flaskblog.models import User, Post
 from flaskblog.forms import RegistartionForm, LoginForm, UpdateAccountForm, PostForm
 from flaskblog import app, db, bcrypt
@@ -11,7 +12,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 @app.route("/")
 def index():
-    posts = Post.query.all()
+    page = request.args.get('page',1, type=int)
+    posts = Post.query.order_by(Post.created.desc()).paginate(page=page, per_page=4)
     return render_template('home.html', post=posts)
 
 
@@ -152,3 +154,14 @@ def post_delete(pk):
     db.session.commit()
     flash('Post has been Deleted', 'success')
     return redirect(url_for('index'))
+
+
+@app.route("/user_posts/<string:username>")
+def user_posts(username):
+    page = request.args.get('page',1,type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.created.desc())\
+        .paginate(page=page, per_page=4)
+
+    return render_template('user_posts.html', post=posts, user=user)

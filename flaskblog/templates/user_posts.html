@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container">
-   
+   <h3 class='col-md-12 col-lg-12'>Posts by @{{user.username}} Count({{post.total}})</h3>
     <div class="col-md-12 col-lg-12">
         {% for post in post.items %}
         <article class="post vt-post" style="padding:10px;">
@@ -12,7 +12,8 @@
                     <div class="post-type post-img">
                         <img class="rounded-circle" src="{{ url_for('static', filename='/images/' + post.author.image_file) }}" class="img-responsive" alt="image post">
                     </div>
-                    <h5 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>
+                    <h5 style='margin-left:10px;'>
+                    <a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>
                     <div class="author-info author-info-2">
                         <ul class="list-inline">
                             <li>
@@ -39,9 +40,9 @@
               {% for page_num in post.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
               {% if page_num %} 
                 {% if post.page == page_num %}
-                <a class="btn btn-primary" style="width: 40px;" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-primary" style="width: 40px;" href="{{ url_for('user_posts',username=user.username, page=page_num) }}">{{ page_num }}</a>
                 {% else %}
-                <a class="btn btn-outline-primary" style="width: 40px;" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-outline-primary" style="width: 40px;" href="{{ url_for('user_posts', username=user.username, page=page_num) }}">{{ page_num }}</a>
                 {% endif %}
               {% else %}
               ...
