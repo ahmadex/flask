@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <div class='container'>
+    <div class='container' style='width:600px;'>
         <h1> Welcome to Registration Page </h1> <br>
         <form method=POST action="">
             {{ form.hidden_tag() }}
@@ -75,13 +75,13 @@
                 
             </div>
 
-            <br>
+           
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info")}}
             </div>
 
         </form>
-    <br>
+    
     <div class="border-toppt-3">
     <small class="text-muted">
         Already Have an Account ?? <a class='ml-2' href="{{ url_for('login') }}">Login up </a>

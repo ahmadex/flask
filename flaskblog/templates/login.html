@@ -2,7 +2,8 @@
 
 {% block content %}
 
-    <div class='container'>
+    <div class='container' style='width:600px;'>
+        
         <h1> Welcome to Login Page </h1> <br>
         <form method=POST action="">
             {{ form.hidden_tag() }}
@@ -53,11 +54,13 @@
             </div>
 
         </form>
-    <br>
-    <div class="border-toppt-3">
-    <small class="text-muted">
-        Don't Have an Account ?? <a class='ml-2' href="{{ url_for('register') }}">Sign up </a>
-    </small>
+        <br>
+        <div class="border-toppt-3">
+        <small class="text-muted">
+            Don't Have an Account ?? <a class='ml-2' href="{{ url_for('register') }}">Sign up </a>
+        </small>
+    
+        
     </div>
 
 {% endblock content %}
