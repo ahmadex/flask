@@ -57,6 +57,71 @@
         </article>
         <hr>
     </div>
+
+    <div class='container'>
+        <form method=POST action="">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.body.label(class="form-control-label") }}
+                
+                {% if form.body.errors %}
+                    {{ form.body(class="form-control form-control-lg is-invalid") }}
+                    <div class='invalid-feedack'>
+                        {% for errors in form.body.errors %}
+                            <span> {{ errors }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.body(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <br>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+                <small class='texted-muted ml-2'>
+            </small>
+            </div>
+        </form>
+    </div>
+    <br><br>
+    <div class='container'>
+        <h3>Comments</h3>
+    </div>
+
+    <div class='container'>
+        <div class="">
+            {% for comment in comments %}
+                <div class="card" style="padding:10px;" >
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img height=80px; class="rounded-circle" src="{{ url_for('static', filename='/images/' + comment.user.image_file) }}" class="img-responsive" alt="image post">
+                            
+                                <div class="author-info author-info-2">
+                                    <h6 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=comment.user.username) }}">@{{ comment.user.username}}</a></h6>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-9 ml-1">
+                                <div class="caption">
+                                <p> {{ comment.body }} </p>
+                            </div>
+                            
+                            <div class='col' style='float:right'>   
+                                <strong>{{ comment.created.strftime('%Y-%m-%d')}}</strong></div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+    
 </div>
 
 {% endblock content %}
