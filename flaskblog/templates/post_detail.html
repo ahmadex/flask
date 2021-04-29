@@ -58,6 +58,7 @@
         <hr>
     </div>
 
+    {% if current_user.is_authenticated %}
     <div class='container'>
         <form method=POST action="">
             {{ form.hidden_tag() }}
@@ -84,13 +85,14 @@
             </div>
         </form>
     </div>
+    {% endif %}
+    
     <br><br>
     <div class='container'>
         <h3>Comments</h3>
     </div>
 
     <div class='container'>
-        <div class="">
             {% for comment in comments %}
                 <div class="card" style="padding:10px;" >
                     <div class="card-body">
@@ -113,12 +115,10 @@
                                 <strong>{{ comment.created.strftime('%Y-%m-%d')}}</strong></div>
                             </div>
                         </div>
-                        </div>
                     </div>
                 </div>
                 <hr>
             {% endfor %}
-        </div>
     </div>
 
     
