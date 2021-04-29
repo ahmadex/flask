@@ -3,6 +3,7 @@ from flaskblog import db, app
 from flaskblog import login_manager
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from sqlalchemy import and_
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -37,9 +38,9 @@ class User(db.Model, UserMixin):
     def like_post(self,post):
         if not self.has_liked_post(post):
             like = PostLike(user_id=self.id, post_id=post.id)
-            db.session.add()
+            db.session.add(like)
     
-    def unlike_post(post):
+    def unlike_post(self,post):
         if self.has_liked_post(post):
             PostLike.query.filter_by(user_id=self.id, post_id=post.id).delete()
     

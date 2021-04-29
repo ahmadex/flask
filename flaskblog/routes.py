@@ -225,3 +225,14 @@ def reset_password(token):
 
     return render_template('reset_password.html',form=form)
 
+
+@app.route("/add_likes/<post_id>/<action>")
+def like_action(action, post_id):
+    post = Post.query.get(post_id)
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    elif action == 'dislike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    return redirect(request.referrer)
