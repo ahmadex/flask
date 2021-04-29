@@ -3,9 +3,10 @@ import os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from wtforms.validators import ValidationError
-from flaskblog.models import User, Post
+from flaskblog.models import User, Post, Comment
 from flaskblog.forms import (RegistartionForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestTokenForm, ResetPasswordForm)
+                             PostForm, RequestTokenForm, ResetPasswordForm, 
+                             CommentForm)
 from flaskblog import app, db, bcrypt, mail
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_mail import Message
@@ -120,7 +121,16 @@ def new_post():
 @app.route("/post_detail/<int:pk>", methods=["GET","POST"])
 def post_detail(pk):
     post = Post.query.get_or_404(pk)
-    return render_template('post_detail.html',post=post)
+    comments = Comment.query.filter_by(post_id=post.id).order_by(Comment.created.desc()).all()
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data, user=current_user, post=post)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment is Added','success')
+        return redirect(url_for("post_detail", pk=post.id))
+    return render_template('post_detail.html',post=post, form=form, comments=comments)
 
 
 @app.route("/post_update/<int:pk>", methods=["GET","POST"])
