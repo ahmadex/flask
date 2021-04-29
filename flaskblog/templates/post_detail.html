@@ -44,9 +44,23 @@
                                 <div class="info">
                                     <p>Posted on:</p>
                                     <strong>{{ post.created.strftime('%Y-%m-%d')}}</strong></div>
-                            </li>    
+                            </li>   
                         </ul>
                     </div>
+                    {% if post.updated %}
+                    <div class="author-info author-info-2">
+                        <ul class="list-inline">
+                            <li>
+                                <div class="info">
+                                    <p>Last Updated:</p>
+                                    <strong>{{ post.updated.strftime('%Y-%m-%d')}}</strong>
+                                    <p>at:</p>
+                                    <strong>{{ post.updated.strftime('%H:%m')}}</strong>
+                                </div>
+                            </li>   
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">
                     <div class="caption">
@@ -125,7 +139,5 @@
 </div>
 
 {% endblock content %}
-
-
 
    

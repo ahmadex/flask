@@ -16,6 +16,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(60), nullable=False, default='default.jpeg')
     posts = db.relationship('Post', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='user', lazy=True)
+    likes = db.relationship('PostLike', backref='user', lazy='dynamic')
     
     def get_reset_token(self, expired_sec=600):
         s = Serializer(app.config['SECRET_KEY'], expired_sec)
@@ -33,6 +34,17 @@ class User(db.Model, UserMixin):
         
         return User.query.get(user_id)
 
+    def like_post(self,post):
+        if not self.has_liked_post(post):
+            like = PostLike(user_id=self.id, post_id=post.id)
+            db.session.add()
+    
+    def unlike_post(post):
+        if self.has_liked_post(post):
+            PostLike.query.filter_by(user_id=self.id, post_id=post.id).delete()
+    
+    def has_liked_post(self, post):
+        return PostLike.query.filter_by(user_id=self.id, post_id=post.id).count() > 0
 
     def __repr__(self):
         return f"User('{self.id}','{self.username}','{self.email}')"
@@ -43,8 +55,11 @@ class Post(db.Model):
     title = db.Column(db.String(50), nullable=False, unique=True)
     body = db.Column(db.Text, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
+    likes = db.relationship('PostLike', backref='post', lazy='dynamic')
+
 
     def __repr__(self):
         return f"Post('{self.id}','{self.title}','{self.created}')"
@@ -58,4 +73,13 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
 
     def __repr__(self):
-        return self.id
+        return f'{self.id}'
+
+
+class PostLike(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.ForeignKey('post.id'), nullable=False)
+
+    def __repr__(self):
+        return f'{self.id}'

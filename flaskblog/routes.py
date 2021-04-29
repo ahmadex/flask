@@ -10,7 +10,7 @@ from flaskblog.forms import (RegistartionForm, LoginForm, UpdateAccountForm,
 from flaskblog import app, db, bcrypt, mail
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_mail import Message
-
+from datetime import datetime
 
 @app.route("/")
 def index():
@@ -143,6 +143,7 @@ def post_update(pk):
     if form.validate_on_submit():
         post.title = form.title.data
         post.body = form.body.data
+        post.updated = datetime.utcnow()
         db.session.add(post)
         db.session.commit()
         flash('Post had been Updated', 'success')
