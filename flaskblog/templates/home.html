@@ -28,15 +28,15 @@
                                 <div class="info">
                                     {% if current_user.is_authenticated %}
                                         {% if current_user.has_liked_post(post) %}
-                                            <a href="{{ url_for('like_action', post_id=
-                                            post.id, action='dislike') }}">DisLike</a>
+                                            <a class="btn btn-secondary" href="{{ url_for('like_action', post_id=
+                                            post.id, action='dislike') }}">Dislike</a>
                                         {% else %}
-                                            <a href="{{ url_for('like_action', post_id=
+                                            <a class='btn btn-primary' href="{{ url_for('like_action', post_id=
                                             post.id, action='like') }}">
                                             Like</a>
                                         {% endif %}
                                     {% endif %}
-                                    {{ post.likes.count() }}   
+                                    LIKES: {{ post.likes.count() }}   
                                 </div>
                             </li>
                         </ul>
