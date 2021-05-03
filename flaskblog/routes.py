@@ -10,7 +10,8 @@ from flaskblog.forms import (RegistartionForm, LoginForm, UpdateAccountForm,
 from flaskblog import app, db, bcrypt, mail
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_mail import Message
-
+from datetime import datetime
+from pytz import timezone
 
 @app.route("/")
 def index():
@@ -143,6 +144,8 @@ def post_update(pk):
     if form.validate_on_submit():
         post.title = form.title.data
         post.body = form.body.data
+        c_date_time = datetime.now()
+        post.updated = c_date_time.astimezone(timezone('Asia/Kolkata'))
         db.session.add(post)
         db.session.commit()
         flash('Post had been Updated', 'success')
@@ -224,3 +227,14 @@ def reset_password(token):
 
     return render_template('reset_password.html',form=form)
 
+
+@app.route("/add_likes/<post_id>/<action>")
+def like_action(action, post_id):
+    post = Post.query.get(post_id)
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    elif action == 'dislike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    return redirect(request.referrer)
