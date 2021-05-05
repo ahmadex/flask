@@ -30,7 +30,8 @@
                         <div class="post-type post-img">
                             <img class="rounded-circle" src="{{ url_for('static', filename='/images/' + post.author.image_file) }}" class="img-responsive" alt="image post">
                         </div>
-                        <h5 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>                        
+                        <h5 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>
+                        <input type='hidden' value="{{ post.id }}" id='post_id'>
                         <div class="author-info author-info-2">
                             <ul class="list-inline">
                                 <li>
@@ -46,12 +47,15 @@
                                     <div class="info">
                                         {% if current_user.is_authenticated %}
                                             {% if current_user.has_liked_post(post) %}
-                                               <a id='dislike' class="btn btn-secondary" href="{{ url_for('like_action', post_id=
-                                                post.id, action='dislike') }}">Dislike</a>
+                                               <!--<a id='dislike' class="btn btn-secondary" href="{{ url_for('like_action', post_id=
+                                                post.id, action='dislike') }}">Dislike</a>-->
+                                                <a class='btn btn-primary' id='like-btn' href="">DisLike</a>
+                                                <!--<button id='dislike-btn' type="button" class="btn btn-primary">Dislike</button>-->
                                             {% else %}
-                                                <a id='like' class='btn btn-primary' href="{{ url_for('like_action', post_id=
+                                            <button id='like-btn' type="button" class="btn btn-primary">Like</button>
+                                                <!--<a id='like' class='btn btn-primary' href="{{ url_for('like_action', post_id=
                                                 post.id, action='like') }}">
-                                                Like</a>
+                                                Like</a>-->
                                             {% endif %}
                                         {% endif %}
                                        <span id='likes1'>Likes: {{ post.likes.count() }}</span> 

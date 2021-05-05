@@ -14,6 +14,7 @@ from datetime import datetime
 from pytz import timezone
 from sqlalchemy import func
 from flask import jsonify
+
 @app.route("/")
 @app.route("/<string:val>")
 def index(val=None):
@@ -240,19 +241,9 @@ def reset_password(token):
     return render_template('reset_password.html',form=form)
 
 
-@app.route("/add_likes/<post_id>/<action>")
-def like_action(action, post_id):
-    post = Post.query.get(post_id)
-    if action == 'like':
-        current_user.like_post(post)
-        db.session.commit()
-    elif action == 'dislike':
-        current_user.unlike_post(post)
-        db.session.commit()
-    return redirect(request.referrer)
-
 @app.route("/add_likes")
-def like_action1():
+def like_action():
+
     print('anything')
     post_id = request.args.get('post_id')
     post = Post.query.get(post_id)
@@ -273,11 +264,6 @@ def like_action1():
     
     return redirect(request.referrer)
 
-    
-
-    
-    
-    
 
 @app.route('/post_search', methods=['GET','POST'])
 def post_search():
