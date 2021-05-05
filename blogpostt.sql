@@ -1,5 +1,5 @@
 --
--- PostgreSQL database dump
+-- PostgreSQL databases dump
 --
 
 -- Dumped from database version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
