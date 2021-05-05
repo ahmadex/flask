@@ -3,7 +3,7 @@ import os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from wtforms.validators import ValidationError
-from flaskblog.models import User, Post, Comment
+from flaskblog.models import User, Post, Comment, PostLike
 from flaskblog.forms import (RegistartionForm, LoginForm, UpdateAccountForm,
                              PostForm, RequestTokenForm, ResetPasswordForm, 
                              CommentForm)
@@ -12,12 +12,24 @@ from flask_login import login_user, logout_user, current_user, login_required
 from flask_mail import Message
 from datetime import datetime
 from pytz import timezone
-
+from sqlalchemy import func
+from flask import jsonify
 @app.route("/")
-def index():
+@app.route("/<string:val>")
+def index(val=None):
+    print(val)
     page = request.args.get('page',1, type=int)
-    posts = Post.query.order_by(Post.created.desc()).paginate(page=page, per_page=4)
-    return render_template('home.html', post=posts)
+
+    if val == 'newest':
+        posts = Post.query.order_by(Post.created.desc()).paginate(page=page, per_page=4)
+    elif val == 'oldest':
+        posts = Post.query.order_by(Post.created.asc()).paginate(page=page, per_page=4)
+    else:
+        posts = Post.query.outerjoin(PostLike).group_by(Post.id).order_by(func.count().desc()).paginate(page=page, per_page=4)
+    
+    # post = db.session.query(Post).outerjoin(PostLike, Post.id == PostLike.post_id).group_by(Post.id).order_by(func.count().desc()).paginate(page=page, per_page=4)
+
+    return render_template('home.html', post=posts, filer=val)
 
 
 @app.route("/about")
@@ -238,3 +250,41 @@ def like_action(action, post_id):
         current_user.unlike_post(post)
         db.session.commit()
     return redirect(request.referrer)
+
+@app.route("/add_likes")
+def like_action1():
+    print('anything')
+    post_id = request.args.get('post_id')
+    post = Post.query.get(post_id)
+    action = request.args.get('action')
+
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+        print(post.likes.count())
+        data = {'count':post.likes.count()}
+        return jsonify(data)
+
+    elif action == 'dislike':
+        current_user.unlike_post(post)
+        db.session.commit()
+        print(post.likes.count())
+        return 'dislikes'
+    
+    return redirect(request.referrer)
+
+    
+
+    
+    
+    
+
+@app.route('/post_search', methods=['GET','POST'])
+def post_search():
+    page = request.args.get('page',1, type=int)
+    title = request.form.get('title')
+    post = Post.query.filter(Post.title.ilike(f'%{title.strip()}%')).paginate(page=page, per_page=4)
+    
+    # print(post.all())
+    return render_template('home.html', post=post)
+
