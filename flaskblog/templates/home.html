@@ -3,74 +3,97 @@
 {% block content %}
 
 <div class="container">
-   
-    <div class="col-md-12 col-lg-12">
-        {% for post in post.items %}
-        <article class="post vt-post" style="padding:10px;">
-            <div class="row">
-                <div class="col-xs-12 col-sm-5 col-md-5 col-lg-4">
-                    <div class="post-type post-img">
-                        <img class="rounded-circle" src="{{ url_for('static', filename='/images/' + post.author.image_file) }}" class="img-responsive" alt="image post">
-                    </div>
-                    <h5 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>
-                    <div class="author-info author-info-2">
-                        <ul class="list-inline">
-                            <li>
-                                <div class="info">
-                                    <p>Posted on:</p>
-                                    <strong>{{ post.created.strftime('%Y-%m-%d')}}</strong></div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="author-info author-info-2">
-                        <ul class="list-inline">
-                            <li>
-                                <div class="info">
-                                    {% if current_user.is_authenticated %}
-                                        {% if current_user.has_liked_post(post) %}
-                                            <a class="btn btn-secondary" href="{{ url_for('like_action', post_id=
-                                            post.id, action='dislike') }}">Dislike</a>
-                                        {% else %}
-                                            <a class='btn btn-primary' href="{{ url_for('like_action', post_id=
-                                            post.id, action='like') }}">
-                                            Like</a>
+    {% if post.items|length == 0 %}
+        <div class="container">
+        <h1> No Records Found !!! </h1>
+        </div>
+    {% else %}
+        <div class="container">
+            <!-- Example split danger button -->
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger">Filter</button>
+                <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{url_for('index', val='newest')}}">Newest</a>
+                    <a class="dropdown-item" href="{{url_for('index', val='oldest')}}">oldest</a>
+                    <a class="dropdown-item" href="{{url_for('index', val='likes')}}">Most Liked</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-12">
+            {% for post in post.items %}
+            <article class="post vt-post" style="padding:10px;">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-4">
+                        <div class="post-type post-img">
+                            <img class="rounded-circle" src="{{ url_for('static', filename='/images/' + post.author.image_file) }}" class="img-responsive" alt="image post">
+                        </div>
+                        <h5 style='margin-left:10px;'><a href="{{ url_for('user_posts', username=post.author.username) }}">@{{ post.author.username}}</a></h5>                        
+                        <div class="author-info author-info-2">
+                            <ul class="list-inline">
+                                <li>
+                                    <div class="info">
+                                        <p>Posted on:</p>
+                                        <strong>{{ post.created.strftime('%Y-%m-%d')}}</strong></div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="author-info author-info-2">
+                            <ul class="list-inline">
+                                <li>
+                                    <div class="info">
+                                        {% if current_user.is_authenticated %}
+                                            {% if current_user.has_liked_post(post) %}
+                                               <a id='dislike' class="btn btn-secondary" href="{{ url_for('like_action', post_id=
+                                                post.id, action='dislike') }}">Dislike</a>
+                                            {% else %}
+                                                <a id='like' class='btn btn-primary' href="{{ url_for('like_action', post_id=
+                                                post.id, action='like') }}">
+                                                Like</a>
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
-                                    LIKES: {{ post.likes.count() }}   
-                                </div>
-                            </li>
-                        </ul>
+                                       <span id='likes1'>Likes: {{ post.likes.count() }}</span> 
+                                        <span style='margin-left:10px;'>Comments: {{ post.comments|length }}   </sapn>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">
+                        <div class="caption">
+                            <h3 class="md-heading"><a href="{{ url_for('post_detail', pk=post.id) }}">{{post.title}}</a></h3>
+                            <p> {{ post.body|truncate(300) }} </p>
+                            <a class="btn btn-primary" href="{{ url_for('post_detail', pk=post.id) }}" role="button">Read More</a> </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">
-                    <div class="caption">
-                        <h3 class="md-heading"><a href="{{ url_for('post_detail', pk=post.id) }}">{{post.title}}</a></h3>
-                        <p> {{ post.body|truncate(300) }} </p>
-                        <a class="btn btn-primary" href="{{ url_for('post_detail', pk=post.id) }}" role="button">Read More</a> </div>
-                </div>
-            </div>
-        </article>
-        <hr>
-        {% endfor %}
-    </div>
+            </article>
+            <hr>
+            {% endfor %}
+        </div>
 
-    <div class="container" align='center' style="margin-bottom: 50px;">
-              {% for page_num in post.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-              {% if page_num %} 
-                {% if post.page == page_num %}
-                <a class="btn btn-primary" style="width: 40px;" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+        <div class="container" align='center' style="margin-bottom: 50px;">
+                {% for page_num in post.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if page_num %} 
+                    {% if post.page == page_num %}
+                    <a class="btn btn-primary" style="width: 40px;" href="{{ url_for('index',val=filer, page=page_num,) }}">{{ page_num }}</a>
+                    {% else %}
+                    <a class="btn btn-outline-primary" style="width: 40px;" href="{{ url_for('index',val=filer, page=page_num) }}">{{ page_num }}</a>
+                    {% endif %}
                 {% else %}
-                <a class="btn btn-outline-primary" style="width: 40px;" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                ...
                 {% endif %}
-              {% else %}
-              ...
-              {% endif %}
 
-              {% endfor %}
-            </div>
+                {% endfor %}
+                </div>
+    {% endif %}
 </div>
 {% endblock content %}
 
+{% block js_content %}
+<script src="{{ url_for('static', filename='js/likes.js')}}"></script>
+{% endblock js_content %}
 
 
    
