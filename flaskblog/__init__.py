@@ -5,10 +5,10 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-
+from decouple import config
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '3e31c0e45a58a1ca84f83a22267335ec'
+app.config['SECRET_KEY'] = config('SECRET_KEY')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ahmadex:test123@localhost:5432/flask_db'
 
@@ -24,7 +24,8 @@ app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'ahmad.srk1998@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Shazam@1998'
+app.config['MAIL_PASSWORD'] = config('PASSWORD')
+
 mail = Mail(app)
 
 migrate = Migrate(app, db)

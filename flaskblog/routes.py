@@ -14,10 +14,10 @@ from datetime import datetime
 from pytz import timezone
 from sqlalchemy import func
 from flask import jsonify
+
 @app.route("/")
-@app.route("/<string:val>")
-def index(val=None):
-    print(val)
+def index():
+    val = request.args.get('val')
     page = request.args.get('page',1, type=int)
 
     if val == 'newest':
@@ -28,6 +28,7 @@ def index(val=None):
         posts = Post.query.outerjoin(PostLike).group_by(Post.id).order_by(func.count().desc()).paginate(page=page, per_page=4)
     
     # post = db.session.query(Post).outerjoin(PostLike, Post.id == PostLike.post_id).group_by(Post.id).order_by(func.count().desc()).paginate(page=page, per_page=4)
+    # post = db.session.query(Post).outerjoin(PostLike, Post.id==PostLike.post_id)
 
     return render_template('home.html', post=posts, filer=val)
 
@@ -240,20 +241,9 @@ def reset_password(token):
     return render_template('reset_password.html',form=form)
 
 
-@app.route("/add_likes/<post_id>/<action>")
-def like_action(action, post_id):
-    post = Post.query.get(post_id)
-    if action == 'like':
-        current_user.like_post(post)
-        db.session.commit()
-    elif action == 'dislike':
-        current_user.unlike_post(post)
-        db.session.commit()
-    return redirect(request.referrer)
-
 @app.route("/add_likes")
-def like_action1():
-    print('anything')
+def like_action():
+
     post_id = request.args.get('post_id')
     post = Post.query.get(post_id)
     action = request.args.get('action')
@@ -261,23 +251,23 @@ def like_action1():
     if action == 'like':
         current_user.like_post(post)
         db.session.commit()
-        print(post.likes.count())
-        data = {'count':post.likes.count()}
+        print('like')
+        print('id',post_id)
+        print('count',post.likes.count())
+        data = {'action':'like','title':post.title,'count':post.likes.count()}
         return jsonify(data)
 
     elif action == 'dislike':
         current_user.unlike_post(post)
         db.session.commit()
-        print(post.likes.count())
-        return 'dislikes'
+        print('dislike')
+        print('id',post_id)
+        print('count',post.likes.count())
+        data = {'action':'dislike','title':post.title,'count':post.likes.count()}
+        return jsonify(data)
     
     return redirect(request.referrer)
 
-    
-
-    
-    
-    
 
 @app.route('/post_search', methods=['GET','POST'])
 def post_search():
